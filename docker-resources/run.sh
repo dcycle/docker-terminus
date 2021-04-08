@@ -1,18 +1,30 @@
 #!/bin/bash
 
 if [ -z "$PANTHEON_TOKEN" ]; then
-  echo 'Please specify your Pantheon token as an environment variable, like so:'
-  echo ''
-  echo 'docker run -e PANTHEON_TOKEN=enter-your-token-here \'
-  echo '  dcycle/terminus \'
-  echo '  --env=test \'
-  echo '  --site=your-site \'
-  echo '  drush "uli"'
+  >&2 echo 'Please specify your Pantheon token as an environment variable.'
+  >&2 echo ''
+  >&2 echo 'see README at https://github.com/dcycle/docker-terminus for details.'
+  exit 1
+fi
+
+if [ -z "$SSHKEYNOPASS" ]; then
+  >&2 echo 'Please specify your password-less SSH key as an environment variable.'
+  >&2 echo ''
+  >&2 echo 'see README at https://github.com/dcycle/docker-terminus for details.'
+  exit 1
+fi
+
+KEYLOC="/root/.ssh/$SSHKEYNOPASS"
+
+if [ ! -f "$KEYLOC" ]; then
+  >&2 echo "$KEYLOC must exist."
+  >&2 echo ''
+  >&2 echo 'see README at https://github.com/dcycle/docker-terminus for details.'
   exit 1
 fi
 
 /terminus-application/vendor/pantheon-systems/terminus/bin/terminus \
-  auth login --machine-token="$PANTHEON_TOKEN"
+  auth:login --machine-token="$PANTHEON_TOKEN"
 
-/terminus-application/vendor/pantheon-systems/terminus/bin/terminus \
-  $@
+ssh-agent bash -c \
+  "ssh-add $KEYLOC; /terminus-application/vendor/pantheon-systems/terminus/bin/terminus $@"

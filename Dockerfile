@@ -1,23 +1,13 @@
-FROM ubuntu
-
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get -y install php
-RUN apt-get -y install curl
-RUN apt-get -y install git
-RUN apt-get -y install zip
-RUN apt-get -y install unzip
-RUN apt-get -y install php-xml
+FROM php:7
 
 # Get composer.
-RUN mkdir /terminus-application
-RUN cd /terminus-application && curl -sS https://getcomposer.org/installer | php
+RUN apt-get -y update && \
+  apt-get --no-install-recommends -y install git openssh-server && \
+  mkdir /terminus-application && \
+  cd /terminus-application && curl -sS https://getcomposer.org/installer | php && \
+  php composer.phar require pantheon-systems/terminus && \
+  rm -rf /var/lib/apt/lists/*
 
-# Require terminus
-RUN cd /terminus-application && php composer.phar require pantheon-systems/terminus
+COPY docker-resources/run.sh /run.sh
 
-# Make a workspace
-RUN mkdir -p /dcycle/workspace
-
-ADD docker-resources/run.sh /run.sh
-
-CMD ["/run.sh"]
+ENTRYPOINT ["/run.sh"]
