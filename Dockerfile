@@ -1,4 +1,4 @@
-FROM php:7
+FROM php:8.3
 
 # Get composer.
 RUN apt-get -y update && \
