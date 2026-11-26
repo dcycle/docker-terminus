@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/dcycle/docker-terminus.svg?style=svg)](https://circleci.com/gh/dcycle/docker-terminus)
+[![GitHub Actions](https://github.com/dcycle/docker-terminus/actions/workflows/config.yml/badge.svg)](../../actions/workflows/config.yml)
 
 Run drush on Pantheon sites with [terminus](https://pantheon.io/docs/terminus).
 
